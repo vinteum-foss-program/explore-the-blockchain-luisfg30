@@ -12,9 +12,16 @@ coinbase_txid=$(echo ${block_json} | jq -r ".tx[0]")
 block_hash=$(bitcoin-cli getblockhash 257343)
 block_json=$(bitcoin-cli getblock ${block_hash} 2)
 
-# 3 Loop on all transactions in block 247343 checking the vin values
-for txid in $(echo $block_json | jq -r '.tx[]'); do
-	#...
+# 4 Loop through all transactions in block 257343
+for outer_txid in $(echo $block_json | jq -r '.tx[] | .txid'); do
+    # Loop through the ".vin[]" array to check each input's "txid"
+    for vin_txid in $(echo $block_json | jq -r ".tx[] | select(.txid == \"${outer_txid}\") | .vin[].txid"); do
+        # If any vin contains "txid" that matches the coinbase_txid, we found the spender
+        if [[ "$vin_txid" == "$coinbase_txid" ]]; then
+            echo ${outer_txid}
+            exit 0
+        fi
+    done
 done
 
-
+echo "No transaction in block 257343 spends the coinbase output of block 256128"
