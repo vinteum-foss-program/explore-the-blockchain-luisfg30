@@ -33,4 +33,4 @@ if [ "${#pub_keys[@]}" -ne 4 ]; then
 fi
 
 # 4 run the createmultisig command with the 4 pub_keys using P2SH type
-bitcoin-cli createmultisig 1 "[\"${pub_keys[0]}\",\"${pub_keys[1]}\",\"${pub_keys[2]}\",\"${pub_keys[3]}\"]" "p2sh-segwit" | jq -r ".address"
+bitcoin-cli createmultisig 1 "[\"${pub_keys[0]}\",\"${pub_keys[1]}\",\"${pub_keys[2]}\",\"${pub_keys[3]}\"]" "legacy" | jq -r ".address"
